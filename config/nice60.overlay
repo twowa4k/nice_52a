@@ -1,22 +1,19 @@
 /*
  * Copyright (c) 2022 The ZMK Contributors
  *
- * SPDX-License-Identifier: MIT
- */
+ * SPDX-License-Identifier: MIT ohne oled X
+ */ 
 
 #include <dt-bindings/zmk/matrix_transform.h>
 
+#include <dt-bindings/led/led.h>
 
 / {
 
 	chosen {
-
+   zephyr,display = &oled;
 		zmk,kscan = &kscan0;
-		
-  
-
-
-
+	
 	};
 
 
@@ -29,7 +26,7 @@
 			<&gpio0 30 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>,
                         <&gpio0 28 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>,
 			<&gpio0 31 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>,
-		
+			<&gpio0 2 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>,
                         <&gpio0 3 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>,
                         <&gpio0 13 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>,
 			<&gpio0 15 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>,
@@ -49,6 +46,42 @@
 	
 
 };
+
+
+
+ encoder: encoder {
+		compatible = "alps,ec11";
+		a-gpios = <&pro_micro 10 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+		b-gpios = <&pro_micro 16 (GPIO_ACTIVE_HIGH | GPIO_PULL_UP)>;
+		steps = <48>;
+    status = "okay";
+ };
+
+ sensors: sensors {
+		compatible = "zmk,keymap-sensors";
+		sensors = <&encoder>;
+		triggers-per-rotation = <12>;
+ };
+}; 
+
+
+&pro_micro_i2c {
+  status = "okay";
+
+ oled: ssd1306@3c {
+    compatible = "solomon,ssd1306fb";
+    reg = <0x3c>;
+    width = <128>;
+    height = <32>;
+    segment-offset = <0>;
+    page-offset = <0>;
+    display-offset = <0>;
+    multiplex-ratio = <31>;
+    com-invdir;
+    segment-remap;
+    com-sequential;
+    prechargep = <0x22>;
+  };
 };
 
 
